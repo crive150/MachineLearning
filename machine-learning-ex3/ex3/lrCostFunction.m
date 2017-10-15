@@ -36,12 +36,31 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+% Vectorized implementations:
 
+% Hypothesis
+h = sigmoid(X*theta);
 
+% Not Regularized -------------------------------------
+%Cost Function
+J = (-y' * log(h) - (1 - y)' * log(1-h)) / m; 
 
+% Gradient
+zeroGrad = ((h - y)' * X)' / m;
+% -----------------------------------------------------
 
+% Regularized versions --------------------------------
+%Cost Function
+RJ= lambda /(2*m) * sum(theta(2:end).^2);
+J = ((-y'*log(h) - (1-y)'*log(1-h)) / m) + RJ;
 
+% Gradient
+S = h - y;
+RG = lambda * theta / m;
+grad = (S' * X)' / m + RG;
 
+grad(1) = zeroGrad(1);
+% -----------------------------------------------------
 
 
 
