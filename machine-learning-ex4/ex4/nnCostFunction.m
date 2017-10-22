@@ -61,24 +61,64 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+K = num_labels;
 
+% Part 1 Forward Propagation
+for i = 1:m
+	
+	x = X(i, :);
+	h_of_x = sigmoid([1 sigmoid([1  x] * Theta1')] * Theta2');
+		
+	% Creating the y output vector. Position in vector that is equal to 1 is the value of the output
+	y_i = zeros(1,K);
+	y_i(y(i)) = 1;
+		
+	%Cost function
+	J = J + sum(-y_i .* log(h_of_x) - (1 - y_i) .* log(1- h_of_x));
 
+end;
+% Cost Function complete
+J = J/m;
 
+% -------------------------------------------------------------
 
+% Part 2 Backward Propagation
 
+D_accuma_1 = zeros(size(Theta1));
+D_accuma_2 = zeros(size(Theta2));
 
+for t=1:m
+	
+	a_1 = [1 X(t,:)];
+	z_2 = a_1 * Theta1';
+	a_2 = [1 sigmoid(z_2)];
+	z_3 = a_2 * Theta2';
+	a_3 = sigmoid(z_3);
+	
+	y_i = zeros(1, K);
+	y_i(y(t)) = 1;
+	
+	delta_3 = a_3 - y_i;
+	delta_2 = delta_3 * Theta2 .* a_2 .* (1-a_2);
+	
+	D_accuma_1 = D_accuma_1 + delta_2(2:end)' * a_1 ;
+	D_accuma_2 = D_accuma_2 + delta_3' * a_2;
+	
+end;
 
+Theta1_grad = (D_accuma_1)/m;
+Theta2_grad = (D_accuma_2)/m;
 
+% Part 3 Regularization
 
+% Regularization added to Cost Function
+% Theta's start from column 2 because we ignore the 1st column when regularizing.
+J = J + ((lambda/(2*m)) * (sum(sum(Theta1(:,2:input_layer_size + 1).^2)) + sum(sum(Theta2(:,2:hidden_layer_size + 1).^2))));
 
-
-
-
-
-
-
-
-
+% Regularization added to Gradients
+% Theta's start from column 2 because we ignore the 1st column when regularizing.
+Theta1_grad(:, 2:input_layer_size + 1) = Theta1_grad(:, 2:input_layer_size + 1) + lambda/m * Theta1(:,2:input_layer_size + 1);
+Theta2_grad(:, 2:hidden_layer_size + 1) = Theta2_grad(:, 2:hidden_layer_size + 1) + lambda/m * Theta2(:,2:hidden_layer_size + 1);
 
 % -------------------------------------------------------------
 
@@ -86,6 +126,5 @@ Theta2_grad = zeros(size(Theta2));
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
