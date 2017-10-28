@@ -19,17 +19,20 @@ grad = zeros(size(theta));
 %               You should set J to the cost and grad to the gradient.
 %
 
+nonreg_grad = grad;
+h_x = X * theta;
+
+% Not Regularized
+J = 1/(2*m) * sum((h_x - y).^2);
+nonreg_grad = (1/m) * (sum(h_x - y) * X');
+
+% Regularized
+J = (1/(2*m)) * sum((h_x - y).^2) + lambda/(2*m) * sum(theta(2:rows(theta)).^2);
+grad = ((1/m) * (h_x - y)' * X)' + (lambda/m) * theta;
 
 
 
-
-
-
-
-
-
-
-
+grad(1) = nonreg_grad(1);
 % =========================================================================
 
 grad = grad(:);
