@@ -23,12 +23,27 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+options = [0.01 0.03 0.1 0.3 1 3 10 30];
+%error can be any large value
+error = 10,000;
 
+% Nested loops through go through any combination of the C and Sigma values
+for i=1:size(options, 2)
+	for j=1:size(options, 2)
+	
+		C_chosen = options(i);
+		sigma_chosen = options(j);
 
-
-
-
-
+		model = svmTrain(X, y, C_chosen, @(x1, x2) gaussianKernel(x1, x2, sigma_chosen));
+		predictions = svmPredict(model, Xval);
+		new_error = mean(double(predictions ~= yval));
+		
+		if new_error < error
+			error = new_error;
+			C = C_chosen;
+			sigma = sigma_chosen;
+		end;
+	end;
+end;
 % =========================================================================
-
 end
