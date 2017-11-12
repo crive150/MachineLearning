@@ -21,12 +21,25 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+m = rows(X);
+n = columns(X)
+j=0;
 
-
-
-
-
-
+for i = 1: m 
+	min_distance = 100000;
+	
+	for k = 1: K
+			
+		distance = norm((X(i,:) - centroids(k,:)));
+		if distance < min_distance
+				
+			min_distance = distance;
+			j = k;			
+		end;
+	end;
+		
+	idx(i) = j;		
+end;
 % =============================================================
 
 end
